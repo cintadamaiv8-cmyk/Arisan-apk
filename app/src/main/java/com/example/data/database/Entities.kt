@@ -8,8 +8,8 @@ data class PesertaEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nama: String,
     val statusAktif: Boolean = true,
-    val statusKeluar: Boolean = false,
-    val tanggalKeluar: Long? = null
+    val statusMenang: Boolean = false,
+    val tanggalMenang: Long? = null
 )
 
 @Entity(tableName = "setoran")

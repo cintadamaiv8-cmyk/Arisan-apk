@@ -25,12 +25,12 @@ class AppRepository(
     val pesertaAktif: Flow<List<PesertaEntity>> = pesertaDao.getPesertaAktif()
     val pesertaEligible: Flow<List<PesertaEntity>> = pesertaDao.getPesertaEligible()
     val countPesertaAktif: Flow<Int> = pesertaDao.countPesertaAktif()
-    val countPesertaSudahKeluar: Flow<Int> = pesertaDao.countPesertaSudahKeluar()
+    val countPesertaSudahMenang: Flow<Int> = pesertaDao.countPesertaSudahMenang()
 
     suspend fun insertPeserta(peserta: PesertaEntity): Long = pesertaDao.insertPeserta(peserta)
     suspend fun updatePeserta(peserta: PesertaEntity) = pesertaDao.updatePeserta(peserta)
     suspend fun deletePesertaById(id: Int) = pesertaDao.deletePesertaById(id)
-    suspend fun resetStatusKeluarPeserta() = pesertaDao.resetStatusKeluar()
+    suspend fun resetStatusMenangPeserta() = pesertaDao.resetStatusMenang()
     fun searchPeserta(query: String): Flow<List<PesertaEntity>> = pesertaDao.searchPeserta(query)
 
     // Setoran
@@ -47,6 +47,10 @@ class AppRepository(
 
     fun sumKasMingguIni(startOfWeek: Long, endOfWeek: Long): Flow<Double?> {
         return setoranDao.sumKasMingguIni(startOfWeek, endOfWeek)
+    }
+    
+    suspend fun getSumKasMingguIniSync(startOfWeek: Long, endOfWeek: Long): Double {
+        return setoranDao.getSumKasMingguIniSync(startOfWeek, endOfWeek) ?: 0.0
     }
 
     // Riwayat

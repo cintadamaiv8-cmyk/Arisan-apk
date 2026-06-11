@@ -13,8 +13,8 @@ import com.example.viewmodel.MaskArisanViewModel
 @Composable
 fun StatistikScreen(viewModel: MaskArisanViewModel) {
     val pesertaAktif by viewModel.countPesertaAktif.collectAsState()
-    val sudahKeluar by viewModel.countPesertaSudahKeluar.collectAsState()
-    val belumKeluar = pesertaAktif - sudahKeluar
+    val sudahMenang by viewModel.countPesertaSudahMenang.collectAsState()
+    val belumMenang = pesertaAktif - sudahMenang
     
     val allSetoran by viewModel.allSetoran.collectAsState()
     val sudahSetor = allSetoran.count { it.statusSetor }
@@ -29,10 +29,10 @@ fun StatistikScreen(viewModel: MaskArisanViewModel) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Peserta", style = MaterialTheme.typography.titleMedium)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     Text("Aktif: $pesertaAktif")
-                    Text("Sudah Keluar: $sudahKeluar")
-                    Text("Belum Keluar: $belumKeluar")
+                    Text("Sudah Menang: $sudahMenang")
+                    Text("Belum Menang: $belumMenang")
                 }
             }
         }
@@ -40,7 +40,7 @@ fun StatistikScreen(viewModel: MaskArisanViewModel) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Setoran", style = MaterialTheme.typography.titleMedium)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     Text("Total Sudah Setor: $sudahSetor")
                     Text("Total Belum Setor: $belumSetor")
                 }
@@ -50,7 +50,7 @@ fun StatistikScreen(viewModel: MaskArisanViewModel) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Lainnya", style = MaterialTheme.typography.titleMedium)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     Text("Jumlah Putaran Dilalui: $putaran")
                 }
             }

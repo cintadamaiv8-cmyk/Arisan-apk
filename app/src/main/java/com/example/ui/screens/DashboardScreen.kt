@@ -24,8 +24,8 @@ import com.example.viewmodel.MaskArisanViewModel
 @Composable
 fun DashboardScreen(viewModel: MaskArisanViewModel) {
     val pesertaAktif by viewModel.countPesertaAktif.collectAsState()
-    val sudahKeluar by viewModel.countPesertaSudahKeluar.collectAsState()
-    val belumKeluar = pesertaAktif - sudahKeluar
+    val sudahMenang by viewModel.countPesertaSudahMenang.collectAsState()
+    val belumMenang = pesertaAktif - sudahMenang
     
     // For MaskBot
     val allPeserta by viewModel.allPeserta.collectAsState()
@@ -39,7 +39,7 @@ fun DashboardScreen(viewModel: MaskArisanViewModel) {
         pesertaKosong = allPeserta.isEmpty(),
         adaBelumSetor = belumSetorList.isNotEmpty(),
         semuaSetor = belumSetorList.isEmpty() && pesertaAktif > 0,
-        semuaSudahMenerima = (belumKeluar <= 0 && pesertaAktif > 0)
+        semuaSudahMenerima = (belumMenang <= 0 && pesertaAktif > 0)
     )
 
     LazyColumn(
@@ -91,16 +91,51 @@ fun DashboardScreen(viewModel: MaskArisanViewModel) {
                 }
             }
         } else {
+            // Arisan Progress Chart
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
+                    elevation = CardDefaults.cardElevation(2.dp)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Text("PROGRES PUTARAN ARISAN", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF64748B), letterSpacing = 1.sp)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        val progress = if (pesertaAktif > 0) sudahMenang.toFloat() / pesertaAktif.toFloat() else 0f
+                        
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
+                            Column {
+                                Text("Sudah Menang", fontSize = 14.sp, color = Color(0xFF64748B))
+                                Text("$sudahMenang dari $pesertaAktif", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                            }
+                            Text("${(progress * 100).toInt()}%", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = MaterialTheme.colorScheme.primary)
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            modifier = Modifier.fillMaxWidth().height(12.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.primaryContainer,
+                            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+                        )
+                    }
+                }
+            }
+            
             // Stats Grid
             item {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     StatsCard(modifier = Modifier.weight(1f), title = "Peserta Aktif", value = pesertaAktif.toString(), valueColor = MaterialTheme.colorScheme.primary)
-                    StatsCard(modifier = Modifier.weight(1f), title = "Sudah Keluar", value = sudahKeluar.toString(), valueColor = MaterialTheme.colorScheme.onSurface)
+                    StatsCard(modifier = Modifier.weight(1f), title = "Sudah Menang", value = sudahMenang.toString(), valueColor = MaterialTheme.colorScheme.onSurface)
                 }
             }
             item {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    StatsCard(modifier = Modifier.weight(1f), title = "Belum Keluar", value = belumKeluar.toString(), valueColor = MaterialTheme.colorScheme.onSurface)
+                    StatsCard(modifier = Modifier.weight(1f), title = "Belum Menang", value = belumMenang.toString(), valueColor = MaterialTheme.colorScheme.onSurface)
                     StatsCard(modifier = Modifier.weight(1f), title = "Belum Setor", value = belumSetorList.size.toString(), valueColor = MaterialTheme.colorScheme.error)
                 }
             }

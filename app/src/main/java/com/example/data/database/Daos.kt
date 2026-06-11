@@ -16,7 +16,7 @@ interface PesertaDao {
     @Query("SELECT * FROM peserta WHERE statusAktif = 1")
     fun getPesertaAktif(): Flow<List<PesertaEntity>>
 
-    @Query("SELECT * FROM peserta WHERE statusAktif = 1 AND statusKeluar = 0")
+    @Query("SELECT * FROM peserta WHERE statusAktif = 1 AND statusMenang = 0")
     fun getPesertaEligible(): Flow<List<PesertaEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -31,11 +31,11 @@ interface PesertaDao {
     @Query("SELECT COUNT(*) FROM peserta WHERE statusAktif = 1")
     fun countPesertaAktif(): Flow<Int>
     
-    @Query("SELECT COUNT(*) FROM peserta WHERE statusKeluar = 1")
-    fun countPesertaSudahKeluar(): Flow<Int>
+    @Query("SELECT COUNT(*) FROM peserta WHERE statusMenang = 1 AND statusAktif = 1")
+    fun countPesertaSudahMenang(): Flow<Int>
 
-    @Query("UPDATE peserta SET statusKeluar = 0, tanggalKeluar = null")
-    suspend fun resetStatusKeluar()
+    @Query("UPDATE peserta SET statusMenang = 0, tanggalMenang = null WHERE statusAktif = 1")
+    suspend fun resetStatusMenang()
 
     @Query("SELECT * FROM peserta WHERE nama LIKE '%' || :query || '%'")
     fun searchPeserta(query: String): Flow<List<PesertaEntity>>
@@ -63,6 +63,9 @@ interface SetoranDao {
     
     @Query("SELECT SUM(nominal) FROM setoran WHERE statusSetor = 1 AND tanggal >= :startOfWeek AND tanggal <= :endOfWeek")
     fun sumKasMingguIni(startOfWeek: Long, endOfWeek: Long): Flow<Double?>
+    
+    @Query("SELECT SUM(nominal) FROM setoran WHERE statusSetor = 1 AND tanggal >= :startOfWeek AND tanggal <= :endOfWeek")
+    suspend fun getSumKasMingguIniSync(startOfWeek: Long, endOfWeek: Long): Double?
 }
 
 @Dao

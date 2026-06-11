@@ -21,7 +21,7 @@ class MaskArisanViewModel(private val repository: AppRepository) : ViewModel() {
     val pesertaAktif = repository.pesertaAktif.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val pesertaEligible = repository.pesertaEligible.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val countPesertaAktif = repository.countPesertaAktif.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
-    val countPesertaSudahKeluar = repository.countPesertaSudahKeluar.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+    val countPesertaSudahMenang = repository.countPesertaSudahMenang.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     val allSetoran = repository.allSetoran.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val belumSetor = repository.belumSetor.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -82,12 +82,15 @@ class MaskArisanViewModel(private val repository: AppRepository) : ViewModel() {
     }
 
     // Arisan (Mulai & Putaran Baru)
-    fun setPemenangArisan(pemenang: PesertaEntity, nominal: Double) = viewModelScope.launch {
+    fun setPemenangArisan(pemenang: PesertaEntity) = viewModelScope.launch {
         val putaranId = pengaturan.value?.nomorPutaran ?: 1
         val pesertaCount = countPesertaAktif.value
 
+        val bounds = com.example.utils.DateUtils.getCurrentWeekStartEnd()
+        val nominal = repository.getSumKasMingguIniSync(bounds.first, bounds.second)
+
         // Update winner
-        val updatedWinner = pemenang.copy(statusKeluar = true, tanggalKeluar = System.currentTimeMillis())
+        val updatedWinner = pemenang.copy(statusMenang = true, tanggalMenang = System.currentTimeMillis())
         repository.updatePeserta(updatedWinner)
 
         // Add history
@@ -105,7 +108,7 @@ class MaskArisanViewModel(private val repository: AppRepository) : ViewModel() {
     fun mulaiPutaranBaru() = viewModelScope.launch {
         val nextPutaran = (pengaturan.value?.nomorPutaran ?: 1) + 1
         repository.updateNomorPutaran(nextPutaran)
-        repository.resetStatusKeluarPeserta()
+        repository.resetStatusMenangPeserta()
 
         logAudit("Putaran Baru", "Memulai Putaran Arisan ke-$nextPutaran")
     }

@@ -1,8 +1,12 @@
 package com.example.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -39,6 +43,7 @@ fun AppNavigation(viewModel: MaskArisanViewModel, themePreferences: ThemePrefere
         Pair(BelumSetorRoute, Icons.Default.Warning to "Belum Setor"),
         Pair(RiwayatRoute, Icons.Default.History to "Riwayat"),
         Pair(StatistikRoute, Icons.Default.BarChart to "Statistik"),
+        Pair(EksporRiwayatRoute, Icons.Default.Share to "Ekspor Riwayat"),
         Pair(PengaturanRoute, Icons.Default.Settings to "Pengaturan"),
         Pair(TentangRoute, Icons.Default.Info to "Tentang")
     )
@@ -84,8 +89,22 @@ fun AppNavigation(viewModel: MaskArisanViewModel, themePreferences: ThemePrefere
                         navigationIconContentColor = Color(0xFF1E1E1E)
                     ),
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        val isDrawerScreen = listOf(
+                            RiwayatRoute::class.qualifiedName,
+                            StatistikRoute::class.qualifiedName,
+                            PengaturanRoute::class.qualifiedName,
+                            TentangRoute::class.qualifiedName,
+                            EksporRiwayatRoute::class.qualifiedName
+                        ).contains(currentDestination?.route)
+
+                        if (isDrawerScreen) {
+                            IconButton(onClick = { navController.popBackStack(DashboardRoute, inclusive = false) }) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
+                            }
+                        } else {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            }
                         }
                     }
                 )
@@ -128,7 +147,11 @@ fun AppNavigation(viewModel: MaskArisanViewModel, themePreferences: ThemePrefere
             NavHost(
                 navController = navController,
                 startDestination = DashboardRoute,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
+                enterTransition = { fadeIn(tween(150)) },
+                exitTransition = { fadeOut(tween(150)) },
+                popEnterTransition = { fadeIn(tween(150)) },
+                popExitTransition = { fadeOut(tween(150)) }
             ) {
                 composable<DashboardRoute> { DashboardScreen(viewModel) }
                 composable<PesertaRoute> { PesertaScreen(viewModel) }
@@ -139,6 +162,7 @@ fun AppNavigation(viewModel: MaskArisanViewModel, themePreferences: ThemePrefere
                 composable<StatistikRoute> { StatistikScreen(viewModel) }
                 composable<PengaturanRoute> { PengaturanScreen(viewModel, themePreferences) }
                 composable<TentangRoute> { TentangScreen() }
+                composable<EksporRiwayatRoute> { EksporRiwayatScreen(viewModel) }
             }
         }
     }

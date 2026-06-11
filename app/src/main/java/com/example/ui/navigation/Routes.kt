@@ -11,3 +11,4 @@ import kotlinx.serialization.Serializable
 @Serializable data object StatistikRoute
 @Serializable data object PengaturanRoute
 @Serializable data object TentangRoute
+@Serializable data object EksporRiwayatRoute

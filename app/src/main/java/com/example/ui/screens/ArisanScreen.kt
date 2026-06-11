@@ -92,7 +92,6 @@ fun ArisanScreen(viewModel: MaskArisanViewModel) {
     }
 
     if (showWinnerDialog && winner != null) {
-        var nominalInput by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = {}, // Force interact
             title = { Text("🎉 PENERIMA ARISAN") },
@@ -101,17 +100,12 @@ fun ArisanScreen(viewModel: MaskArisanViewModel) {
                     Text(winner!!.nama, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     Text("Tanggal: ${DateUtils.formatTanggal(System.currentTimeMillis())}")
                     Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = nominalInput,
-                        onValueChange = { nominalInput = it },
-                        label = { Text("Nominal Didapat (Rp)") }
-                    )
+                    Text("Hasil undian akan disimpan otomatis ke Riwayat.", fontSize = 14.sp)
                 }
             },
             confirmButton = {
                 Button(onClick = {
-                    val nominal = nominalInput.toDoubleOrNull() ?: 0.0
-                    viewModel.setPemenangArisan(winner!!, nominal)
+                    viewModel.setPemenangArisan(winner!!)
                     showWinnerDialog = false
                 }) {
                     Text("Simpan Hasil")
