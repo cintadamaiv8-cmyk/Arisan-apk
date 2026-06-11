@@ -1,0 +1,6 @@
+{
+  "name": "MaskArisan",
+  "description": "Aplikasi arisan offline untuk RT, RW, komunitas, kelompok warga dan organisasi kecil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
